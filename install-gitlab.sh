@@ -43,8 +43,10 @@ set_gitlab_edition()
 {
     if [[ $GITLAB_EDITION == "community" ]]; then
         GITLAB_PACKAGE=gitlab-ce
+        GITLAB_EDITION_CODE=ce
     elif [[ $GITLAB_EDITION == "enterprise" ]]; then
         GITLAB_PACKAGE=gitlab-ee
+        GITLAB_EDITION_CODE=ee
     else
         fatal "\"${GITLAB_EDITION}\" is not a supported GitLab edition"
         exit 1
@@ -119,7 +121,12 @@ echo "Setting up Gitlab deb repository ..."
 set_apt_pdiff_off
 curl https://packages.gitlab.com/install/repositories/gitlab/${GITLAB_PACKAGE}/script.deb.sh | sudo bash
 echo "Installing ${GITLAB_PACKAGE} via apt ..."
-apt-get install -y ${GITLAB_PACKAGE}
+echo "GITLAB_VERSION=${GITLAB_VERSION}"
+if [[ -z "${GITLAB_VERSION// }" ]]; then
+    apt-get install -y ${GITLAB_PACKAGE}
+else
+    apt-get install -y ${GITLAB_PACKAGE}=${GITLAB_VERSION}-${GITLAB_EDITION_CODE}.0
+fi
 
 # fix the config and reconfigure
 cp /vagrant/gitlab.rb /etc/gitlab/gitlab.rb
