@@ -9,6 +9,7 @@ port = ENV['GITLAB_PORT'] || 8443
 swap = ENV['GITLAB_SWAP'] || 0
 host = ENV['GITLAB_HOST'] || "gitlab.local"
 edition = ENV['GITLAB_EDITION'] || "community"
+version = ENV['GITLAB_VERSION'] || ""
 
 Vagrant.require_version ">= 1.8.0"
 
@@ -19,7 +20,7 @@ Vagrant.configure("2") do |config|
     config.vm.hostname = host
     config.vm.box = "ubuntu/xenial64"
     config.vm.provision :shell, :path => "install-gitlab.sh",
-      env: { "GITLAB_SWAP" => swap, "GITLAB_HOSTNAME" => host, "GITLAB_PORT" => port, "GITLAB_EDITION" => edition }
+      env: { "GITLAB_SWAP" => swap, "GITLAB_HOSTNAME" => host, "GITLAB_PORT" => port, "GITLAB_EDITION" => edition , "GITLAB_VERSION" => version}
 
     # On Linux, we cannot forward ports <1024
     # We need to use higher ports, and have port forward or nginx proxy
